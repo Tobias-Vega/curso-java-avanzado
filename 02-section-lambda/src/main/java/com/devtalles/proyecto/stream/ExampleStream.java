@@ -26,5 +26,16 @@ public class ExampleStream {
         names.stream().filter(name -> name.length() > 3)
                 .map(String::toUpperCase)
                 .forEach(System.out::println);
+
+        Stream<String> stream1 = Stream.of("Ana", "Luis", "María", "Juan");
+
+        // No se puede volver a consumir
+        // stream1.forEach(System.out::println);
+
+        List<String> strings = stream1.toList();
+
+        System.out.println(strings);
     }
+
+
 }
