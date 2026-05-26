@@ -2,6 +2,7 @@ package com.devtalles.proyecto.record;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Main {
@@ -38,9 +39,41 @@ public class Main {
                         Collectors.counting()
                 ));
 
-        System.out.println(byPriceRange);
-        System.out.println(countByRange);
+//        System.out.println(byPriceRange);
+//        System.out.println(countByRange);
 
+        // 2. Reducción matemática
+        Double total = products.stream()
+                .map(ProductDto::price)
+                .reduce(0.0, Double::sum);
 
+        System.out.println(total);
+
+        String productsummary = products.stream()
+                .map(productDto -> productDto.name() + " ($" + productDto.price() + ")")
+                .reduce("", (s1, s2) -> {
+                    if (s1.isEmpty()) {
+                        return s2;
+                    } else {
+                        return s1 + " | " + s2;
+                    }
+        });
+
+        System.out.println(productsummary);
+
+        // Conversión entre colecciones
+        Set<Double> uniquePrices = products.stream()
+                .map(ProductDto::price)
+                .collect(Collectors.toSet());
+
+        System.out.println(uniquePrices);
+
+        Map<String, Double> productMap = products.stream()
+                .collect(Collectors.toMap(
+                        ProductDto::name,
+                        ProductDto::price
+                ));
+
+        System.out.println(productMap);
     }
 }
