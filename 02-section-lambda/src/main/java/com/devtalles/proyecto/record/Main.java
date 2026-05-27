@@ -18,7 +18,8 @@ public class Main {
         List<ProductDto> products = List.of(
                 new ProductDto("Notebook", 1200.0),
                 new ProductDto("Mouse", 25.5),
-                new ProductDto("Keyboard", 55.0)
+                new ProductDto("Keyboard", 55.0),
+                new ProductDto("Keyboard", 89.0)
         );
 
         List<String> discountProducts = products.stream()
@@ -71,9 +72,18 @@ public class Main {
         Map<String, Double> productMap = products.stream()
                 .collect(Collectors.toMap(
                         ProductDto::name,
-                        ProductDto::price
+                        ProductDto::price,
+                        (oldValue, newValue) -> newValue
                 ));
 
         System.out.println(productMap);
+
+        List<ProductDto> expensiveProducts = productMap.entrySet().stream()
+                        .filter(e -> e.getValue() > 50.00)
+                        .map(e -> new ProductDto(e.getKey(), e.getValue()))
+                        .toList();
+
+        System.out.println(expensiveProducts);
+
     }
 }
