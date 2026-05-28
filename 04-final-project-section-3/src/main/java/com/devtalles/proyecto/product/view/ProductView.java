@@ -2,9 +2,12 @@ package com.devtalles.proyecto.product.view;
 
 import com.devtalles.proyecto.product.controller.ProductController;
 import com.devtalles.proyecto.product.exceptions.InvalidProductException;
+import com.devtalles.proyecto.product.exceptions.ProductNotFoundException;
 import com.devtalles.proyecto.product.model.Product;
 import com.devtalles.proyecto.product.model.ProductCategory;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class ProductView {
@@ -31,8 +34,15 @@ public class ProductView {
             scanner.nextLine();
 
             switch (option) {
-                case 1:
-
+                case 1 -> addProductView();
+                case 2 -> showAllProductsView();
+                case 3 -> findByIdProductView();
+                case 4 -> deleteProductView();
+                case 6 -> {
+                    System.out.println("Programa finalizado");
+                    scanner.close();
+                    return;
+                }
             }
         }
     }
@@ -51,6 +61,51 @@ public class ProductView {
         } catch (InvalidProductException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    private void showAllProductsView() {
+        List<Product> products = productController.getAllProducts();
+
+        if (products.isEmpty()) {
+            System.out.println("Lista de productos vacía");
+        }
+
+        products.forEach(this::showProductView);
+    }
+
+    private void findByIdProductView() {
+        long id = readValidLong("Ingrese el ID del producto", 0);
+        try {
+            Optional<Product> product = productController.getProductById(id);
+            if (product.isEmpty()) {
+                System.out.println("El producto no se encuentra en la base de datos");
+                return;
+            }
+
+            Product product1 = product.get();
+            showProductView(product1);
+        } catch (InvalidProductException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void deleteProductView() {
+        long id = readValidLong("Ingrese el ID del producto", 0);
+        try {
+            productController.removeProduct(id);
+        } catch (ProductNotFoundException | InvalidProductException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void showProductView(Product product) {
+        System.out.println("\n Producto:");
+        System.out.println("Id: " + product.getId());
+        System.out.println("Nombre: " + product.getName());
+        System.out.println("Precio: " + product.getPrice());
+        System.out.println("Stock: " + product.getStock());
+        System.out.println("Categoría: " + product.getCategory());
+        System.out.println("----------------------------------");
     }
 
     private String readNonEmptyString(String message) {
