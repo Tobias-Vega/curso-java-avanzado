@@ -1,5 +1,7 @@
 package com.devtalles.proyecto.product.service;
 
+import com.devtalles.proyecto.product.exceptions.InvalidProductException;
+import com.devtalles.proyecto.product.exceptions.ProductNotFoundException;
 import com.devtalles.proyecto.product.interfaces.ProductRepository;
 import com.devtalles.proyecto.product.model.Product;
 
@@ -19,5 +21,33 @@ public class ProductService {
 
     public Optional<Product> getProductById(Long id) {
         return productRepository.findById(id);
+    }
+
+    public void saveProduct(Product product) throws InvalidProductException {
+        if (productRepository.existById(product.getId())) {
+            throw new InvalidProductException("El producto que desea agregar ya existe");
+        }
+
+        productRepository.save(product);
+    }
+
+    public void deleteProduct(Long id) throws ProductNotFoundException {
+        Optional<Product> optionalProduct = productRepository.findById(id);
+
+        if (optionalProduct.isEmpty()) {
+            throw new ProductNotFoundException("El producto que desea eliminar no existe");
+        }
+
+        productRepository.delete(id);
+    }
+
+    public void updateProduct(Product product) throws ProductNotFoundException {
+        Optional<Product> optionalProduct = productRepository.findById(product.getId());
+
+        if (optionalProduct.isEmpty()) {
+            throw new ProductNotFoundException("El producto que desea actualizar no existe");
+        }
+
+        productRepository.update(optionalProduct);
     }
 }
