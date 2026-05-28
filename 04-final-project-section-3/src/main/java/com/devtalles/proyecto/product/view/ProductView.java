@@ -38,6 +38,7 @@ public class ProductView {
                 case 2 -> showAllProductsView();
                 case 3 -> findByIdProductView();
                 case 4 -> deleteProductView();
+                case 5 -> updateProductView();
                 case 6 -> {
                     System.out.println("Programa finalizado");
                     scanner.close();
@@ -53,13 +54,16 @@ public class ProductView {
         double price = readValidDouble("Ingrese el precio del producto", 10);
         int stock = readValidInteger("Ingrese el stock del producto", 1);
         String categoryString = readNonEmptyString("Ingrese la categoría del producto: \nELECTRÓNICOS, COMIDAS, LIBROS, OTROS");
-        ProductCategory category = ProductCategory.valueOf(categoryString);
+        ProductCategory category = ProductCategory.valueOf(categoryString.trim().toUpperCase());
 
         Product product = new Product(id,name, price, stock, category);
         try {
             productController.addProduct(product);
+            System.out.println("Producto guardado exitosamente...");
         } catch (InvalidProductException e) {
             System.out.println(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            System.out.println("La categoría no existe");
         }
     }
 
@@ -89,10 +93,66 @@ public class ProductView {
         }
     }
 
+    private void updateProductView() {
+        long id = readValidLong("Ingrese el ID del producto", 0);
+        try {
+            Optional<Product> product = productController.getProductById(id);
+            if (product.isEmpty()) {
+                System.out.println("El producto no se encuentra en la base de datos");
+                return;
+            }
+
+            System.out.println("Producto a modificar");
+            Product product1 = product.get();
+            showProductView(product1);
+
+            System.out.println("Seleccion el campo que desea modificar:");
+            System.out.println("1. Nombre");
+            System.out.println("2. Precio");
+            System.out.println("3. Stock");
+            System.out.println("4. Categoría");
+            System.out.println("5. TODOS");
+            System.out.println("6. Salir");
+
+            int option = scanner.nextInt();
+            scanner.nextLine();
+
+
+            switch (option) {
+                case 1 -> product.get().setName(readNonEmptyString("Ingrese el nuevo nombre"));
+                case 2 -> product.get().setPrice(readValidDouble("Ingrese el nuevo precio", 0));
+                case 3 -> product.get().setStock(readValidInteger("Ingrese el nuevo stock", 1));
+                case 4 -> {
+
+                    String categoryString = readNonEmptyString("Ingrese la categoría del producto: \\nELECTRÓNICOS, COMIDAS, LIBROS, OTROS\"");
+                    product.get().setCategory(ProductCategory.valueOf(categoryString.trim().toUpperCase()));
+                }
+
+                case 5 -> {
+                    product.get().setName(readNonEmptyString("Ingrese el nuevo nombre"));
+                    product.get().setPrice(readValidDouble("Ingrese el nuevo precio", 0));
+                    product.get().setStock(readValidInteger("Ingrese el nuevo stock", 1));
+                    String categoryString = readNonEmptyString("Ingrese la categoría del producto: \\nELECTRÓNICOS, COMIDAS, LIBROS, OTROS\"");
+                    product.get().setCategory(ProductCategory.valueOf(categoryString.trim().toUpperCase()));
+                }
+                case 6 -> {
+                    return;
+                }
+            }
+
+            System.out.println("Producto actualizado exitosamente...");
+            productController.updateProduct(product1);
+
+        } catch (InvalidProductException | ProductNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     private void deleteProductView() {
         long id = readValidLong("Ingrese el ID del producto", 0);
         try {
             productController.removeProduct(id);
+            System.out.println("Producto eliminado exitosamente...");
         } catch (ProductNotFoundException | InvalidProductException e) {
             System.out.println(e.getMessage());
         }
