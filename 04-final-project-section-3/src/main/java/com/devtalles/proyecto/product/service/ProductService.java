@@ -23,7 +23,7 @@ public class ProductService {
         return productRepository.findById(id);
     }
 
-    public void saveProduct(Product product) throws InvalidProductException {
+    public void saveProduct(Product product) {
         ProductValidator.validate(product);
         if (productRepository.existById(product.getId())) {
             throw new InvalidProductException("El producto que desea agregar ya existe");
@@ -32,24 +32,21 @@ public class ProductService {
         productRepository.save(product);
     }
 
-    public void deleteProduct(Long id) throws ProductNotFoundException {
-        Optional<Product> optionalProduct = productRepository.findById(id);
-
-        if (optionalProduct.isEmpty()) {
+    public void deleteProduct(Long id) {
+        if (!productRepository.existById(id)) {
             throw new ProductNotFoundException("El producto que desea eliminar no existe");
         }
 
         productRepository.delete(id);
     }
 
-    public void updateProduct(Product product) throws ProductNotFoundException, InvalidProductException {
+    public void updateProduct(Product product) {
         ProductValidator.validate(product);
-        Optional<Product> optionalProduct = productRepository.findById(product.getId());
 
-        if (optionalProduct.isEmpty()) {
+        if (!productRepository.existById(product.getId())) {
             throw new ProductNotFoundException("El producto que desea actualizar no existe");
         }
 
-        productRepository.update(optionalProduct);
+        productRepository.update(product);
     }
 }

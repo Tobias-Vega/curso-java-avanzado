@@ -11,6 +11,6 @@ public interface ProductRepository {
     Optional<Product> findById(Long id);
     void save(Product product);
     void delete(Long id);
-    void update(Optional<Product> product) throws ProductNotFoundException;
+    void update(Product product);
     boolean existById(Long id);
 }

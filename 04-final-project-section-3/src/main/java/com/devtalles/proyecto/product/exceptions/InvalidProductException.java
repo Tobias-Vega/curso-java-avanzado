@@ -1,6 +1,6 @@
 package com.devtalles.proyecto.product.exceptions;
 
-public class InvalidProductException extends Exception {
+public class InvalidProductException extends RuntimeException {
     public InvalidProductException(String message) {
         super(message);
     }

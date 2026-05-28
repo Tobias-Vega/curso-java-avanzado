@@ -34,32 +34,18 @@ public class ProductRepositoryServices implements ProductRepository {
     }
 
     @Override
-    public void update(Optional<Product> product) throws ProductNotFoundException {
-        if (product.isPresent()) {
-            Long idToUpdate = product.get().getId();
-            int index = findIndexById(idToUpdate);
-
-            if (index != -1) {
-                products.set(index, product.get());
-            } else {
-                throw new ProductNotFoundException("El producto que quiere actualizar no existe");
+    public void update(Product product) {
+        for (int i = 0; i < products.size(); i++) {
+            if (products.get(i).getId().equals(product.getId())) {
+                products.set(i, product);
+                return;
             }
-        } else {
-            throw new ProductNotFoundException("El producto que quiere actualizar no existe");
         }
+        throw new ProductNotFoundException("El producto que quiere actualizar no existe");
     }
 
     @Override
     public void delete(Long id) {
         products.removeIf(product -> product.getId().equals(id));
-    }
-
-    private int findIndexById(Long id) {
-        for (int i = 0; i < products.size(); i++) {
-            if (products.get(i).equals(id)) {
-                return i;
-            }
-        }
-            return -1;
     }
 }

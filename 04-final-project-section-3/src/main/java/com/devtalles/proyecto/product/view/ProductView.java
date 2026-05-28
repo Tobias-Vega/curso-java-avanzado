@@ -26,12 +26,11 @@ public class ProductView {
             System.out.println("2. Mostrar Productos");
             System.out.println("3. Buscar Producto por ID");
             System.out.println("4. Eliminar Producto por ID");
-            System.out.println("4. Modificar Producto por ID");
+            System.out.println("5. Modificar Producto por ID");
             System.out.println("6. Salir");
             System.out.println("Opción: ");
 
-            int option = scanner.nextInt();
-            scanner.nextLine();
+            int option = readValidInteger("Seleccione una opción", 1);
 
             switch (option) {
                 case 1 -> addProductView();
@@ -44,6 +43,7 @@ public class ProductView {
                     scanner.close();
                     return;
                 }
+                default -> System.out.println("Opción no valida. Intente nuevamente.");
             }
         }
     }
@@ -54,10 +54,10 @@ public class ProductView {
         double price = readValidDouble("Ingrese el precio del producto", 10);
         int stock = readValidInteger("Ingrese el stock del producto", 1);
         String categoryString = readNonEmptyString("Ingrese la categoría del producto: \nELECTRÓNICOS, COMIDAS, LIBROS, OTROS");
-        ProductCategory category = ProductCategory.valueOf(categoryString.trim().toUpperCase());
 
-        Product product = new Product(id,name, price, stock, category);
         try {
+            ProductCategory category = ProductCategory.valueOf(categoryString.trim().toUpperCase());
+            Product product = new Product(id,name, price, stock, category);
             productController.addProduct(product);
             System.out.println("Producto guardado exitosamente...");
         } catch (InvalidProductException e) {
@@ -96,15 +96,15 @@ public class ProductView {
     private void updateProductView() {
         long id = readValidLong("Ingrese el ID del producto", 0);
         try {
-            Optional<Product> product = productController.getProductById(id);
-            if (product.isEmpty()) {
+            Optional<Product> optionalProduct = productController.getProductById(id);
+            if (optionalProduct.isEmpty()) {
                 System.out.println("El producto no se encuentra en la base de datos");
                 return;
             }
 
             System.out.println("Producto a modificar");
-            Product product1 = product.get();
-            showProductView(product1);
+            Product currentProduct = optionalProduct.get();
+            showProductView(currentProduct);
 
             System.out.println("Seleccion el campo que desea modificar:");
             System.out.println("1. Nombre");
@@ -114,34 +114,38 @@ public class ProductView {
             System.out.println("5. TODOS");
             System.out.println("6. Salir");
 
-            int option = scanner.nextInt();
-            scanner.nextLine();
+            int option = readValidInteger("Opción: ", 1);
 
+            if (option == 6) return;
+
+            Product updateProduct = new Product(
+                    currentProduct.getId(),
+                    currentProduct.getName(),
+                    currentProduct.getPrice(),
+                    currentProduct.getStock(),
+                    currentProduct.getCategory()
+            );
 
             switch (option) {
-                case 1 -> product.get().setName(readNonEmptyString("Ingrese el nuevo nombre"));
-                case 2 -> product.get().setPrice(readValidDouble("Ingrese el nuevo precio", 0));
-                case 3 -> product.get().setStock(readValidInteger("Ingrese el nuevo stock", 1));
+                case 1 -> updateProduct.setName(readNonEmptyString("Ingrese el nuevo nombre"));
+                case 2 -> updateProduct.setPrice(readValidDouble("Ingrese el nuevo precio", 0));
+                case 3 -> updateProduct.setStock(readValidInteger("Ingrese el nuevo stock", 1));
                 case 4 -> {
 
                     String categoryString = readNonEmptyString("Ingrese la categoría del producto: \\nELECTRÓNICOS, COMIDAS, LIBROS, OTROS\"");
-                    product.get().setCategory(ProductCategory.valueOf(categoryString.trim().toUpperCase()));
+                    updateProduct.setCategory(ProductCategory.valueOf(categoryString.trim().toUpperCase()));
                 }
-
                 case 5 -> {
-                    product.get().setName(readNonEmptyString("Ingrese el nuevo nombre"));
-                    product.get().setPrice(readValidDouble("Ingrese el nuevo precio", 0));
-                    product.get().setStock(readValidInteger("Ingrese el nuevo stock", 1));
+                    updateProduct.setName(readNonEmptyString("Ingrese el nuevo nombre"));
+                    updateProduct.setPrice(readValidDouble("Ingrese el nuevo precio", 0));
+                    updateProduct.setStock(readValidInteger("Ingrese el nuevo stock", 1));
                     String categoryString = readNonEmptyString("Ingrese la categoría del producto: \\nELECTRÓNICOS, COMIDAS, LIBROS, OTROS\"");
-                    product.get().setCategory(ProductCategory.valueOf(categoryString.trim().toUpperCase()));
-                }
-                case 6 -> {
-                    return;
+                    updateProduct.setCategory(ProductCategory.valueOf(categoryString.trim().toUpperCase()));
                 }
             }
 
             System.out.println("Producto actualizado exitosamente...");
-            productController.updateProduct(product1);
+            productController.updateProduct(updateProduct);
 
         } catch (InvalidProductException | ProductNotFoundException e) {
             System.out.println(e.getMessage());
@@ -171,7 +175,7 @@ public class ProductView {
     private String readNonEmptyString(String message) {
         String input;
         do {
-            System.out.println(message);
+            System.out.println(message + " ");
             input = scanner.nextLine().trim();
             if (input.length() < 3) {
                 System.out.println("El valor no puede ser vacío o el nombre es muy corto");
@@ -185,7 +189,7 @@ public class ProductView {
         long value;
 
         do {
-            System.out.println(message);
+            System.out.println(message + " ");
             String input = scanner.nextLine().trim();
             try {
                 value = Long.parseLong(input);
@@ -207,7 +211,7 @@ public class ProductView {
         int value;
 
         do {
-            System.out.println(message);
+            System.out.println(message + " ");
             String input = scanner.nextLine().trim();
             try {
                 value = Integer.parseInt(input);
@@ -229,7 +233,7 @@ public class ProductView {
         double value;
 
         do {
-            System.out.println(message);
+            System.out.println(message + " ");
             String input = scanner.nextLine().trim();
             try {
                 value = Double.parseDouble(input);
