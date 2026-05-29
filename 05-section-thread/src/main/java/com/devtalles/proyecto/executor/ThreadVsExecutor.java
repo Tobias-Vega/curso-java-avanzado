@@ -7,16 +7,18 @@ public class ThreadVsExecutor {
     public static void main(String[] args) {
         System.out.println("Con Thread-----------------");
         for (int i = 1; i < 4; i++) {
+            final int taskId = i;
             new Thread(
-                    () -> System.out.println("Tarea A Thread " + Thread.currentThread().getName())
+                    () -> System.out.println("Tarea A Thread " + taskId + " " + Thread.currentThread().getName())
             ).start();
         }
 
         System.out.println("Con Executor-----------------");
         ExecutorService executor = Executors.newFixedThreadPool(2);
         for (int i = 1; i < 4; i++) {
+            final int taskId = i;
             executor.execute(
-                    () -> System.out.println("Tarea A Executor " + Thread.currentThread().getName())
+                    () -> System.out.println("Tarea A Executor " + taskId + " " + Thread.currentThread().getName())
             );
         }
 
