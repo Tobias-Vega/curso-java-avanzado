@@ -11,7 +11,7 @@ public class Main {
         File[] logFiles = logsFolder.listFiles((dir, name) -> name.endsWith(".log"));
 
         if (logFiles == null || logFiles.length == 0) {
-            System.out.println("No se encontraron archivos .log en la carpte 'logs'. " +
+            System.out.println("No se encontraron archivos .log en la carpeta 'logs'. " +
                     "Asegúrate de crearla y poner archivos dentro");
             return;
         }
