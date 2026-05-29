@@ -2,6 +2,7 @@ package com.devtalles.proyecto.executor;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class ShutdownComparision {
     public static void main(String[] args) throws InterruptedException {
@@ -12,9 +13,13 @@ public class ShutdownComparision {
             executor.submit(() -> {
                 System.out.println("Tarea A Executor " + taskId + " " + Thread.currentThread().getName());
                 try {
+                    // Simulación de tiempo de la API
                     Thread.sleep(4000);
                 } catch (InterruptedException e) {
                     System.out.println("Tarea " + taskId + " fue interrumpida");
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {}
                     return;
                 }
 
@@ -32,6 +37,12 @@ public class ShutdownComparision {
         } else {
             System.out.println("Finalización ordenada");
             executor.shutdown();
+        }
+
+        if (executor.awaitTermination(1, TimeUnit.SECONDS)) {
+            System.out.println("Tareas finalizadas correctamente");
+        } else {
+            System.out.println("Las tareas no finalizaron correctamente");
         }
     }
 }
