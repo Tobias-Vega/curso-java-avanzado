@@ -1,10 +1,17 @@
 package com.devtalles.proyecto;
 
 import com.devtalles.proyecto.log.model.LogEntity;
+import com.devtalles.proyecto.log.model.LogSummary;
+import com.devtalles.proyecto.log.service.LogProcessorTask;
 import com.devtalles.proyecto.log.service.LogService;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class Main {
     public static void main(String[] args) {
@@ -22,8 +29,24 @@ public class Main {
 
         LogService service = new LogService();
 
-        List<LogEntity> entries = service.readLogsFromFile(logFiles[0].getAbsolutePath());
+        ExecutorService executor = Executors.newFixedThreadPool(3);
+        List<Future<LogSummary>> futures = new ArrayList<>();
 
-        entries.forEach(System.out::println);
+        for (File logFile: logFiles) {
+            List<LogEntity> entities = service.readLogsFromFile(logFile.getAbsolutePath());
+            LogProcessorTask task = new LogProcessorTask(entities);
+            futures.add(executor.submit(task));
+        }
+
+        for (Future<LogSummary> future : futures) {
+            try {
+                LogSummary summary = future.get();
+                System.out.println(summary);
+            } catch (InterruptedException | ExecutionException e ) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        executor.shutdown();
     }
 }

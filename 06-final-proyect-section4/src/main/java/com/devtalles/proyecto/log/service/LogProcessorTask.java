@@ -19,6 +19,9 @@ public class LogProcessorTask implements Callable<LogSummary> {
 
     @Override
     public LogSummary call() throws Exception {
+
+        System.out.println("Tarea: Procesando " + logEntities.size() + " " +
+                "entradas de log en hilo" + Thread.currentThread().getName());
         int totalEntries = logEntities.size();
         List<LogEntity> errorsLogs = logEntities.stream()
                 .filter(logEntity -> logEntity.getStatusCode() >= 400)
@@ -35,11 +38,14 @@ public class LogProcessorTask implements Callable<LogSummary> {
                 .orElse(0.0);
 
         Map<Integer, Long> errorCountsByCode =logEntities.stream()
+                .filter(logEntity -> logEntity.getStatusCode() >= 400)
                 .collect(Collectors.groupingBy(
                         LogEntity::getStatusCode,
                         Collectors.counting()
                 ));
 
+        System.out.println("Finalizando:  " + logEntities.size() + " " +
+                "entradas de log en hilo" + Thread.currentThread().getName());
 
         return new LogSummary(totalEntries, errorCount, uniqueUsers, averageResponseTime, errorCountsByCode);
     }
