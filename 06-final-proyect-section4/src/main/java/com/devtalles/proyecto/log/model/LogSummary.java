@@ -22,7 +22,7 @@ public class LogSummary {
     public String toString() {
         return "Total: " + totalEntries +
                 ", Errores: " + errorCount +
-                ", Ususarios únicos: " + uniqueUsers.size() +
+                ", Usuarios únicos: " + uniqueUsers.size() +
                 ", Tiempo promedio: " + averageResponseTime + "ms" +
                 ", Errores por código: " + errorCountsByCode;
     }
