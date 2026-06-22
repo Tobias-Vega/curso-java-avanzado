@@ -1,14 +1,18 @@
 package com.devtalles.proyecto.student.controller;
 
 import com.devtalles.proyecto.student.model.Student;
+import com.devtalles.proyecto.student.service.StudentService;
 import com.devtalles.proyecto.student.stream.StudentStream;
 
 public class StudentController {
     private final StudentStream stream;
+    private final StudentService service;
 
 
-    public StudentController(StudentStream stream) {
+    public StudentController(StudentStream stream, StudentService service) {
         this.stream = stream;
+        this.service = service;
+        this.service.subscribeTo(stream.getStream());
     }
 
     public boolean processInput(String name, String ageInput) {

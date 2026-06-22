@@ -21,7 +21,11 @@ public class StudentConsoleView {
            System.out.println("Ingrese el nombre");
            String name = scanner.nextLine().trim();
 
-           if (name.equalsIgnoreCase("exit")) break;
+           if (name.equalsIgnoreCase("exit")) {
+               controller.finishInput();
+               System.out.println("Fin...");
+               break;
+           }
 
            System.out.println("Ingrese la edad");
            String age = scanner.nextLine().trim();
@@ -32,8 +36,6 @@ public class StudentConsoleView {
                System.out.println("Edad inválida...");
            }
 
-           controller.finishInput();
-           System.out.println("Fin...");
        }
     }
 

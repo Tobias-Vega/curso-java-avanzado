@@ -19,6 +19,7 @@ public class StudentService {
                 () -> {
                     System.out.println("Stream completo. Estudiantes cargados...");
                     students.forEach(System.out::println);
+                    showStatics();
                 }
         );
     }

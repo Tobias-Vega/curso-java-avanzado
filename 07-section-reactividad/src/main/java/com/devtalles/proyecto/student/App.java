@@ -1,6 +1,7 @@
 package com.devtalles.proyecto.student;
 
 import com.devtalles.proyecto.student.controller.StudentController;
+import com.devtalles.proyecto.student.service.StudentService;
 import com.devtalles.proyecto.student.stream.StudentStream;
 import com.devtalles.proyecto.student.view.StudentConsoleView;
 
@@ -19,7 +20,8 @@ public class App {
 //
 //        stream.completed();
 
-        StudentController studentController = new StudentController(stream);
+        StudentService studentService = new StudentService();
+        StudentController studentController = new StudentController(stream, studentService);
         StudentConsoleView view = new StudentConsoleView(studentController);
 
         view.start();
