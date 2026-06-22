@@ -1,6 +1,6 @@
 package com.devtalles.proyecto.encadenamientoAvanzado;
 
-import com.devtalles.proyecto.task.student.model.Student;
+import com.devtalles.proyecto.student.model.Student;
 import io.reactivex.rxjava3.core.Observable;
 
 public class ChainingExample {

@@ -1,9 +1,7 @@
 package com.devtalles.proyecto.combinacionFlujos;
 
-import com.devtalles.proyecto.task.student.model.Student;
+import com.devtalles.proyecto.student.model.Student;
 import io.reactivex.rxjava3.core.Observable;
-
-import java.util.concurrent.TimeUnit;
 
 public class Merge {
     public static void main(String[] args) throws InterruptedException {

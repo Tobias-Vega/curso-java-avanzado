@@ -1,4 +1,4 @@
-package com.devtalles.proyecto.task.student.model;
+package com.devtalles.proyecto.student.model;
 
 public class Student {
     private String name;
