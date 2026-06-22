@@ -1,6 +1,9 @@
 package com.devtalles.proyecto.observer;
 
+import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -14,10 +17,57 @@ public class ObserverExample01 {
                         .collect(Collectors.toSet())
                 );
 
-        courseStream.subscribe(
-                item -> System.out.println("Recibido: " + item),
-                error -> System.out.println(error.getMessage()),
-                () -> System.out.println("Fin")
-        );
+        Observer<String> observer = new Observer<>() {
+            private Disposable disposable;
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+                this.disposable = d;
+                System.out.println("Estoy suscripto al curso!!!");
+            }
+
+            @Override
+            public void onNext(String s) {
+                if (s.equalsIgnoreCase("c")) {
+                    disposable.dispose();
+                } else {
+                    System.out.println("Recibí: " + s);
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                System.out.println("Error: " + e.getMessage());
+            }
+
+            @Override
+            public void onComplete() {
+                System.out.println("Fin del Stream");
+            }
+        };
+
+        Observer<String> observer2 = new Observer<>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+                System.out.println("Estoy suscripto al curso soy observer2!!!");
+            }
+
+            @Override
+            public void onNext(String s) {
+                System.out.println("soy observer2 Recibí: " + s);
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                System.out.println("Error: " + e.getMessage());
+            }
+
+            @Override
+            public void onComplete() {
+                System.out.println("Fin del Stream observer2");
+            }
+        };
+
+        courseStream.subscribe(observer);
+        courseStream.subscribe(observer2);
     }
 }
