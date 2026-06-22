@@ -12,7 +12,12 @@ public class StudentController {
     public StudentController(StudentStream stream, StudentService service) {
         this.stream = stream;
         this.service = service;
-        this.service.subscribeTo(stream.getStream());
+        this.service.subscribeTo(
+
+                stream.getStream()
+                        .filter(student -> student.getAge() >= 21)
+                        .map(student -> new Student(student.getName().toUpperCase(), student.getAge()))
+        );
     }
 
     public boolean processInput(String name, String ageInput) {
