@@ -38,4 +38,19 @@ public class StudentService {
         }
 
     }
+
+    public Observable<Student> verifyStudent(Student student) throws InterruptedException {
+        return Observable.create(emitter -> {
+            System.out.println("Verificando..." + student.getName());
+            Thread.sleep(1000);
+
+            if (student.getAge() >= 18) {
+                emitter.onNext(student);
+            } else {
+                System.out.println("Estudiante es menor de edad..." + student.getName());
+            }
+
+            emitter.onComplete();
+        });
+    }
 }

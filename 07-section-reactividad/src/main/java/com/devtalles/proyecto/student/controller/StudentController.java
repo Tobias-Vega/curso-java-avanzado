@@ -15,8 +15,7 @@ public class StudentController {
         this.service.subscribeTo(
 
                 stream.getStream()
-                        .filter(student -> student.getAge() >= 21)
-                        .map(student -> new Student(student.getName().toUpperCase(), student.getAge()))
+                        .flatMap(service::verifyStudent)
         );
     }
 
