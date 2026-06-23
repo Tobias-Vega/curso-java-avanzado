@@ -3,6 +3,7 @@ package com.devtalles.proyecto.student.controller;
 import com.devtalles.proyecto.student.model.Student;
 import com.devtalles.proyecto.student.service.StudentService;
 import com.devtalles.proyecto.student.stream.StudentStream;
+import io.reactivex.rxjava3.core.Observable;
 
 public class StudentController {
     private final StudentStream stream;
@@ -16,6 +17,11 @@ public class StudentController {
 
                 stream.getStream()
                         .flatMap(service::verifyStudent)
+                        .flatMap(service::validateName)
+                        .onErrorResumeNext(throwable -> {
+                            System.out.println("Error: " + throwable.getMessage());
+                            return Observable.empty();
+                        })
         );
     }
 

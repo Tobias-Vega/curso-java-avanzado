@@ -15,7 +15,7 @@ public class StudentService {
                     System.out.println("Agregando estudiante..." + student);
                     students.add(student);
                 },
-                error -> System.out.println(error.getMessage()),
+                error -> System.out.println("Error en el Stream: " + error.getMessage()),
                 () -> {
                     System.out.println("Stream completo. Estudiantes cargados...");
                     students.forEach(System.out::println);
@@ -48,6 +48,21 @@ public class StudentService {
                 emitter.onNext(student);
             } else {
                 System.out.println("Estudiante es menor de edad..." + student.getName());
+            }
+
+            emitter.onComplete();
+        });
+    }
+
+    public Observable<Student> validateName(Student student) throws InterruptedException {
+        return Observable.create(emitter -> {
+            System.out.println("Verificando..." + student.getName());
+            Thread.sleep(1000);
+
+            if (student.getName().length() < 3) {
+                emitter.onError(new IllegalArgumentException("Error en la longitud del nombre"));
+            } else {
+                emitter.onNext(student);
             }
 
             emitter.onComplete();
